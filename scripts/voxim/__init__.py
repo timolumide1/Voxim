@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .design import Brand, Kit, Scene  # noqa: F401
-from .voice import narrator  # noqa: F401
+from .voice import narrator, recorded  # noqa: F401
 
 __version__ = "0.1.0"
 

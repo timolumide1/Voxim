@@ -112,3 +112,41 @@ class narrator:
 
         audio, rate = speak(text, self.voice, self.speed, self.lang)
         return m.Speech(audio[:, None], text=text, rate=rate)
+
+
+class recorded:
+    """Your own recorded narration, cut into lines by `voxim takes`; lines without a take use `fallback`.
+
+        VOICE = recorded("takes", fallback=narrator("bf_emma"))
+    """
+
+    def __init__(self, folder: str = "takes", fallback=None):
+        import hashlib
+        import inspect
+        import json
+
+        here = Path(inspect.stack()[1].filename).resolve().parent
+        self.folder = (here / folder) if not Path(folder).is_absolute() else Path(folder)
+        f = self.folder / "takes.json"
+        self.index = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+        self.fallback = fallback or narrator("af_heart")
+        h = hashlib.sha256()
+        for name in sorted(set(self.index.values())):
+            p = self.folder / name
+            if p.exists():
+                h.update(p.read_bytes())
+        self._stamp = h.hexdigest()[:12]
+
+    def __repr__(self) -> str:
+        return f"recorded({self._stamp}, fallback={self.fallback!r})"
+
+    def __call__(self, text: str):
+        import re
+
+        import manimgx as m
+
+        key = re.sub(r"\s+", " ", re.sub(r"[\[\]]", "", text)).strip()
+        name = self.index.get(key)
+        if name and (self.folder / name).exists():
+            return m.Speech(str(self.folder / name), text=text)
+        return self.fallback(text)

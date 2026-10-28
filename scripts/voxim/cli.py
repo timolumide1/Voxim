@@ -4,6 +4,7 @@
   voxim new lesson|product DIR  start a project from a template
   voxim build DIR [--only A,B]  render what changed and assemble out/film.mp4 (+ clips, guide)
   voxim check DIR               contact sheet + audio report for out/film.mp4
+  voxim takes DIR Scene=file …  cut your own recordings into narration lines (see takes.py)
   voxim voices                  list narrator voices
   voxim say "text" [--voice V]  hear a voice: writes say.wav
 """
@@ -30,6 +31,7 @@ def main(argv=None):
     p.add_argument("--music", help="'pad', 'none' or an audio file (overrides film.py)")
     p.add_argument("--no-clips", action="store_true")
     p = sub.add_parser("check"); p.add_argument("dir")
+    p = sub.add_parser("takes"); p.add_argument("dir"); p.add_argument("pairs", nargs="+", help="Scene=recording.m4a")
     sub.add_parser("voices")
     p = sub.add_parser("say"); p.add_argument("text"); p.add_argument("--voice", default="af_heart"); p.add_argument("--speed", type=float, default=1.0)
     a = ap.parse_args(argv)
@@ -62,6 +64,10 @@ def main(argv=None):
         from .check import check
 
         check(a.dir)
+    elif a.cmd == "takes":
+        from .takes import takes
+
+        takes(a.dir, a.pairs)
     elif a.cmd == "voices":
         from .voice import voices
 

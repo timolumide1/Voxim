@@ -20,6 +20,7 @@ dependencies = [
 
 [project.optional-dependencies]
 screen = ["playwright"]
+takes = ["sherpa-onnx"]
 
 [project.scripts]
 voxim = "voxim.cli:main"

@@ -140,7 +140,8 @@ def finish(src: Path, dst: Path, music: str, music_db: float, srt: Path | None):
             vf = ["-vf", f"subtitles={srt.name}:fontsdir={FONTS.as_posix()}:force_style='{CAPTION_STYLE}'"]
         else:
             print("  (this ffmpeg can't burn captions: no libass. Captions are in the .srt files.)")
-    vcodec = ["-c:v", "libx264", "-preset", "medium", "-crf", "19"] if vf else ["-c:v", "copy"]
+    # always yuv420p / High profile: 4:4:4 H.264 won't play in QuickTime, Windows, phones or browsers
+    vcodec = ["-c:v", "libx264", "-preset", "medium", "-crf", "19", "-pix_fmt", "yuv420p", "-profile:v", "high"]
     aout = ["-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-movflags", "+faststart"]
     cwd = str(srt.parent) if vf else None
     if music == "none":
@@ -265,7 +266,7 @@ def build(project: str | Path, only: list[str] | None = None, url: str | None = 
         inputs = sum([["-i", p] for _, p, _ in built], [])
         fv, fa, graph = "[0:v]", "[0:a]", []
         for i in range(1, len(built)):
-            graph.append(f"{fv}[{i}:v]xfade=transition=fade:duration={T}:offset={offsets[i]:.3f}[v{i}]")
+            graph.append(f"{fv}[{i}:v]xfade=transition=fade:duration={T}:offset={offsets[i]:.3f},format=yuv420p[v{i}]")
             graph.append(f"{fa}[{i}:a]acrossfade=d={T}:c1=tri:c2=tri[a{i}]")
             fv, fa = f"[v{i}]", f"[a{i}]"
         ff.run([*inputs, "-filter_complex", ";".join(graph), "-map", fv, "-map", fa,

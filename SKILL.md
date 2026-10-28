@@ -118,6 +118,13 @@ build steps.
   `voxim say "text" --voice bf_emma` writes a sample. Spell out what a voice would misread
   ("H two O", "twenty-nine and a half days"); the captions use the same words, so use
   `CAPTION_TEXT` in film.py to map them back ("H₂O").
+- A real person's voice instead: give them the narration (every `self.say` line, one numbered
+  line per pause, one recording per scene, a second's pause between lines). Then
+  `voxim takes <project> Intro=01.m4a PPE=02.m4a …` cuts each recording into its lines (offline
+  speech recognition, matched to the script) and cleans the audio, and
+  `VOICE = recorded("takes", fallback=narrator("bf_emma"))` uses them; animations follow the
+  speaker's own timing, and any line without a take uses the fallback voice. Needs
+  `pip install "voxim[takes]"` (sherpa-onnx).
 - Rendering takes roughly 5–30 seconds per scene. Speech is cached in `voice/`, so re-renders are faster.
 - Video files are big. If the disk fills up, delete `<project>/build/*.norm.mov` and `*.mp4` there,
   and never leave a stray ffmpeg running (`references/troubleshooting.md`).
