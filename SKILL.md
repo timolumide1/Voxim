@@ -5,6 +5,23 @@ description: Make narrated, captioned explainer videos with animated diagrams (M
 
 # Voxim
 
+> **Requirements.** Voxim runs code on the user's own machine, so it needs an agent that can run
+> shell commands with network access for the first install: Claude Code, or Claude with code
+> execution. Tested with Claude Code on Linux; the macOS and Windows installers are included.
+> - **Disk:** about 1.5 GB (Python environment, voice model, working files for a build).
+> - **Python 3.13 and ffmpeg:** you don't need to install them. The installer uses
+>   [uv](https://github.com/astral-sh/uv) to create a private Python 3.13 environment in `~/.voxim/`,
+>   and uses your system ffmpeg if there is one, otherwise a bundled copy. A system ffmpeg with
+>   libass is needed to burn captions into the video; without it captions are still written as `.srt`.
+> - **Downloads on first run** (all from public sources, saved under `~/.voxim/`):
+>   uv itself if it's missing (from astral.sh); Python 3.13 and the Python packages (from PyPI);
+>   the Kokoro voice model, about 340 MB (`kokoro-v1.0.onnx`, `voices-v1.0.bin`, from the
+>   kokoro-onnx GitHub releases). Optional, only when used: a speech recogniser for `voxim takes`,
+>   about 200 MB (Whisper base.en, from the sherpa-onnx GitHub releases), and a Chromium browser
+>   for website demos (Playwright).
+> - **After that it runs offline.** No API keys, no accounts, and nothing about your lessons or
+>   videos is sent anywhere.
+
 Turns teaching notes (or a product) into narrated, captioned animation. Everything runs locally:
 ManimGX draws and times the animation, Kokoro speaks the narration offline, ffmpeg assembles it.
 The person only installs this skill; the first run installs the rest.

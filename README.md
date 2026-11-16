@@ -31,7 +31,8 @@ Make short animated clips for the parts that need a visual."*
 
 The first run installs a private Python 3.13 environment in `~/.voxim/` and downloads the
 voice model (about 340 MB). This needs a machine where Claude can run commands (Claude Code, or
-Claude with code execution and network access).
+Claude with code execution and network access). See the requirements at the top of `SKILL.md`
+for exactly what is downloaded and from where; after the first run everything works offline.
 
 ## Use it by hand
 
